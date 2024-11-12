@@ -3,9 +3,9 @@ package main
 import (
 	"TalUp-backend/internal/auth"
 	"TalUp-backend/internal/config/server"
+	"TalUp-backend/pkg/db"
 	"context"
 	"fmt"
-	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"log"
@@ -20,7 +20,7 @@ func main() {
 
 	config := server.NewConfig()
 
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	conn, err := db.GetDBConnection()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
