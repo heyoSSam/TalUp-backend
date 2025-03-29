@@ -30,11 +30,36 @@ type JwtCustomClaims struct {
 	jwt.Claims
 }
 
+type LoginRequest struct {
+	Email    string `json:"email" example:"cs@example.com"`
+	Password string `json:"password" example:"1234"`
+}
+
+type RegRequest struct {
+	Email          string `json:"email" example:"blablabla@gmail.com"`
+	LanguageLevel  string `json:"language_level" example:"1"`
+	NativeLanguage string `json:"native_language" example:"russian"`
+	Password       string `json:"password" example:"1234"`
+	Username       string `json:"username" example:"bla"`
+}
+
 func RegisterRoutes(e *echo.Group) {
 	e.POST("/login", Login)
 	e.POST("/register", Register)
 }
 
+// Login handles user authentication
+// @Summary      Login
+// @Description  Authenticate user and return JWT token
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request body LoginRequest true "User Credentials"
+// @Success      200  {object}  map[string]string
+// @Failure      400  {object}  map[string]string
+// @Failure      404  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /auth/login [post]
 func Login(c echo.Context) error {
 	var user User
 
@@ -76,6 +101,17 @@ func Login(c echo.Context) error {
 	}
 }
 
+// Register handles user signup
+// @Summary      Register
+// @Description  Create a new user account
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request body RegRequest true "User Data"
+// @Success      200  {object}  map[string]string
+// @Failure      400  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /auth/register [post]
 func Register(c echo.Context) error {
 	conn, err := db.GetDBConnection()
 	if err != nil {
@@ -94,8 +130,8 @@ func Register(c echo.Context) error {
 		log.Fatal(err)
 	}
 
-	_, err = conn.Exec(context.Background(), "INSERT INTO users (id, email, password_hash, username, created_at, language_level, native_language, xp, last_login) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
-		user.Id, user.Email, hashedPassword, user.Username, time.Now(), user.LanguageLevel, user.NativeLanguage, user.Xp, time.Now())
+	_, err = conn.Exec(context.Background(), "INSERT INTO users (email, password_hash, username, created_at, language_level, native_language, xp, last_login) VALUES ($1, $2, $3, $4, $5, $6, 0, $7)",
+		user.Email, hashedPassword, user.Username, time.Now(), user.LanguageLevel, user.NativeLanguage, time.Now())
 	if err != nil {
 		log.Fatal("Error inserting data:", err)
 	}
