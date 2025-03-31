@@ -81,6 +81,7 @@ func Login(c echo.Context) error {
 		})
 
 		tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{
 				"error": "Failed to generate token",

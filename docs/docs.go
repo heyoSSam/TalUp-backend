@@ -142,6 +142,63 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/taskWord/answers": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Calls the RoBERTa API and returns a shuffled list of words",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TaskWord"
+                ],
+                "summary": "Generate words from a given sentence",
+                "parameters": [
+                    {
+                        "description": "Input request containing key and sentence",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/taskWord.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/taskWord.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -182,6 +239,36 @@ const docTemplate = `{
                     "example": "bla"
                 }
             }
+        },
+        "taskWord.Request": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "sentence": {
+                    "type": "string"
+                }
+            }
+        },
+        "taskWord.Response": {
+            "type": "object",
+            "properties": {
+                "words": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Type \"Bearer {your JWT token}\" to authenticate.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

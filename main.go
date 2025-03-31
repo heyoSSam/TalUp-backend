@@ -4,6 +4,7 @@ import (
 	_ "TalUp-backend/docs"
 	"TalUp-backend/internal/auth"
 	"TalUp-backend/internal/config/server"
+	"TalUp-backend/internal/taskWord"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -25,6 +26,11 @@ import (
 // @host localhost:8080
 // @BasePath /
 
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer {your JWT token}" to authenticate.
+
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -38,12 +44,10 @@ func main() {
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	authGroup := e.Group("/auth")
-	auth.RegisterRoutes(authGroup)
+	taskWordGroup := e.Group("/taskWord")
 
-	//Middleware for routes with token access
-	//homeGroup.Use(echojwt.WithConfig(echojwt.Config{
-	//	SigningKey: []byte(os.Getenv("JWT_SECRET")),
-	//}))
+	taskWord.RegisterRoutes(taskWordGroup)
+	auth.RegisterRoutes(authGroup)
 
 	if err := e.Start(":" + config.Port); err != nil {
 		log.Fatal(err)

@@ -27,6 +27,20 @@ definitions:
         example: bla
         type: string
     type: object
+  taskWord.Request:
+    properties:
+      key:
+        type: string
+      sentence:
+        type: string
+    type: object
+  taskWord.Response:
+    properties:
+      words:
+        items:
+          type: string
+        type: array
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -119,4 +133,46 @@ paths:
       summary: Register
       tags:
       - auth
+  /taskWord/answers:
+    post:
+      consumes:
+      - application/json
+      description: Calls the RoBERTa API and returns a shuffled list of words
+      parameters:
+      - description: Input request containing key and sentence
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/taskWord.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/taskWord.Response'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Generate words from a given sentence
+      tags:
+      - TaskWord
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer {your JWT token}" to authenticate.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
