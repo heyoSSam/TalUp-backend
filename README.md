@@ -10,7 +10,7 @@
 ### Clone the Repository
 
 ```sh
-git clone https://github.com/your-username/your-repo.git
+git clone https://github.com/heyoSSam/TalUp-backend
 cd your-repo
 ```
 
